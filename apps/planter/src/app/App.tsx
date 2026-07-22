@@ -15,7 +15,7 @@ import {
   levaTheme,
 } from '@nxgen/ui-kit';
 import { PlanterModel } from '@nxgen/planter-scene';
-import { validate, PRESET_REFS } from '@nxgen/planter-domain';
+import { validate, computeSummary, PRESET_REFS } from '@nxgen/planter-domain';
 import { usePlanterStore, applyPlanterPreset } from './store';
 import { ControlPanel } from './ControlPanel';
 
@@ -24,18 +24,21 @@ const EXPORT_EVENT = 'planter:export';
 export default function App() {
   const cfg = usePlanterStore((s) => s.config);
   const issues = useMemo(() => validate(cfg), [cfg]);
+  const summary = useMemo(() => computeSummary(cfg), [cfg]);
 
   const statusItems = [
     { k: 'Szer.', v: `${cfg.width} mm` },
     { k: 'Głęb.', v: `${cfg.depth} mm` },
     { k: 'Wys.', v: `${cfg.height} mm` },
+    { k: 'Desek', v: String(summary.boards) },
+    { k: 'Ziemia', v: `${summary.volumeL.toFixed(0)} l`, accent: true },
   ];
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'var(--paper)' }}>
       <Topbar
         brand={<>Planter</>}
-        tagline="Konfigurator donic 3D"
+        tagline="Donice drewniane · listwowe"
         badge="konfigurator 3D"
       >
         <PresetPicker presets={PRESET_REFS} onPick={applyPlanterPreset} />
@@ -67,20 +70,20 @@ export default function App() {
           WIDOK 3D · PODGLĄD NA ŻYWO
         </div>
         <ConfiguratorCanvas
-          cameraPosition={[1400, 1100, 1400]}
-          controlsTarget={[0, 450, 0]}
-          maxDistance={6000}
+          cameraPosition={[1300, 950, 1300]}
+          controlsTarget={[0, 350, 0]}
+          maxDistance={5000}
           grid={{
-            size: 2400,
-            divisions: 24,
+            size: 1800,
+            divisions: 18,
             color: '#c9c4b8',
             centerColor: '#e8e4d8',
           }}
         >
           <SceneEnvironment
-            preset="studio"
+            preset="apartment"
             intensity={1}
-            shadows={{ softness: 0.7, scale: 2400 }}
+            shadows={{ softness: 0.7, scale: 1800 }}
           />
           <PlanterModel config={cfg} />
           <ExportListener

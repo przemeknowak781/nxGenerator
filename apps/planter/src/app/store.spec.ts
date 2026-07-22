@@ -15,9 +15,7 @@ describe('Planter store', () => {
   });
 
   it('applyPreset merges a preset', () => {
-    applyPlanterPreset('tall');
-    expect(usePlanterStore.getState().config.height).toBeGreaterThan(
-      DEFAULT_CONFIG.height,
-    );
+    applyPlanterPreset('wysoka_modrzew');
+    expect(usePlanterStore.getState().config.height).toBeGreaterThan(DEFAULT_CONFIG.height);
   });
 });
