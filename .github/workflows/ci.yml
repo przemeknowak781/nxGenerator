@@ -22,7 +22,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
 
       # Derive base/head SHAs so `nx affected` only runs projects touched
       # by this change (and everything that depends on them).
