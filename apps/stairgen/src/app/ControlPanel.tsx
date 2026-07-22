@@ -1,6 +1,11 @@
 import { useControls, folder } from 'leva';
-import { useStairStore } from '../store/useStairStore';
+import { useStairStore } from './store';
 
+/**
+ * Stair-specific Leva schema. This is intentionally app-level: it is the one
+ * place that knows the full stair parameter surface. The panel chrome, theme
+ * and layout come from `@nxgen/ui-kit`.
+ */
 export function ControlPanel() {
   const cfg = useStairStore.getState().config;
   const update = useStairStore((s) => s.update);
