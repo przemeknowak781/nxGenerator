@@ -35,6 +35,15 @@
     },
     {
       "path": "./apps/planter"
+    },
+    {
+      "path": "./libs/taras-domain"
+    },
+    {
+      "path": "./libs/taras-scene"
+    },
+    {
+      "path": "./apps/taras"
     }
   ],
   "compilerOptions": {}

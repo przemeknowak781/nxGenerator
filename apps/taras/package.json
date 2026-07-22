@@ -1,0 +1,11 @@
+{
+  "name": "@nxgen/taras",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "tags": [
+      "scope:taras",
+      "type:app"
+    ]
+  }
+}
