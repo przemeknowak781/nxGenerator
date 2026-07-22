@@ -2,10 +2,10 @@
 
 # ⬢ nxGenerator
 
-### Ekosystem parametrycznych konfiguratorów 3D zbudowany na monorepo **Nx**
+### An ecosystem of parametric 3D configurators built on an **Nx** monorepo
 
-Jedna aplikacja (*Stairgen*) rozłożona na współdzielony **configurator kit** —
-dzięki czemu **kolejny konfigurator powstaje jednym poleceniem**.
+One app (*Stairgen*) decomposed into a shared **configurator kit** —
+so that **the next configurator is created with a single command**.
 
 [![CI](https://github.com/przemeknowak781/nxGenerator/actions/workflows/ci.yml/badge.svg)](https://github.com/przemeknowak781/nxGenerator/actions/workflows/ci.yml)
 ![Nx](https://img.shields.io/badge/Nx-23-143055?logo=nx&logoColor=white)
@@ -18,38 +18,38 @@ dzięki czemu **kolejny konfigurator powstaje jednym poleceniem**.
 
 ---
 
-## 💡 Idea w jednym zdaniu
+## 💡 The idea in one sentence
 
-> **Aplikacja to tylko „composition root".** Całą jej treść — silnik parametryczny,
-> scenę 3D, eksport, walidację, chrome UI — **Nx skleja z bibliotek** w jeden
-> graf i uruchamia jednym poleceniem.
+> **The app is just a "composition root".** Everything it contains — the
+> parametric engine, the 3D scene, export, validation, UI chrome — **Nx wires
+> together from libraries** into a single graph and runs it with one command.
 
 ```bash
-npx nx serve @nxgen/stairgen      # ← i cała aplikacja żyje
+npx nx serve @nxgen/stairgen      # ← and the whole app comes alive
 ```
 
 ---
 
-## 🧩 Jak Nx uruchamia aplikację
+## 🧩 How Nx runs the app
 
-`apps/stairgen` importuje tylko pakiety `@nxgen/*`. Nx trzyma **graf zależności**
-wyprowadzony z tych importów, rozwiązuje je do **źródła** bibliotek (bez kroku
-budowania między nimi) i podaje cały graf do Vite:
+`apps/stairgen` imports nothing but `@nxgen/*` packages. Nx maintains a
+**dependency graph** derived from those imports, resolves them to library
+**source** (no build step in between) and hands the whole graph to Vite:
 
 ```mermaid
 flowchart TD
-    S["apps/stairgen<br/><i>~120 linii: App, store, ControlPanel</i>"]
+    S["apps/stairgen<br/><i>~120 lines: App, store, ControlPanel</i>"]
 
-    subgraph stair["scope:stair · domena schodów"]
-        SSC["stair-scene<br/><small>komponenty R3F</small>"]
-        SGE["stair-geometry<br/><small>buildery three.js</small>"]
-        SDO["stair-domain<br/><small>typy, presety, reguły WT §68</small>"]
+    subgraph stair["scope:stair · stair domain"]
+        SSC["stair-scene<br/><small>R3F components</small>"]
+        SGE["stair-geometry<br/><small>three.js builders</small>"]
+        SDO["stair-domain<br/><small>types, presets, WT §68 rules</small>"]
     end
 
-    subgraph shared["scope:shared · configurator kit (reużywalny)"]
-        C3["configurator-3d<br/><small>canvas · kamera · HDRI · eksport GLB</small>"]
-        UI["ui-kit<br/><small>chrome UI · motyw Leva</small>"]
-        CO["configurator-core<br/><small>store · presety · walidacja</small>"]
+    subgraph shared["scope:shared · configurator kit (reusable)"]
+        C3["configurator-3d<br/><small>canvas · camera · HDRI · GLB export</small>"]
+        UI["ui-kit<br/><small>UI chrome · Leva theme</small>"]
+        CO["configurator-core<br/><small>store · presets · validation</small>"]
     end
 
     S --> SSC & UI & C3 & CO & SDO
@@ -64,22 +64,22 @@ flowchart TD
     class S app; class SSC,SGE,SDO s; class C3,UI,CO sh;
 ```
 
-Co daje tu Nx (a czego nie dałby zwykły folder z kodem):
+What Nx gives you here (that a plain folder of code would not):
 
-| Mechanizm Nx | Efekt dla aplikacji |
+| Nx mechanism | Effect on the app |
 |---|---|
-| **Source graph** z importów `@nxgen/*` | `nx serve` startuje apkę z **żywymi** bibliotekami — HMR działa przez granice pakietów |
-| **Package exports → źródło** | Zero kroku „zbuduj bibliotekę, potem apkę"; Vite bundluje cały graf naraz |
-| **TS project references** | `nx typecheck` sprawdza typy w poprawnej kolejności, przyrostowo |
-| **Task graph + `dependsOn`** | `build`/`test`/`typecheck` uruchamiają się we właściwej kolejności zależności |
+| **Source graph** from `@nxgen/*` imports | `nx serve` boots the app with **live** libraries — HMR works across package boundaries |
+| **Package exports → source** | No "build the library, then the app" step; Vite bundles the whole graph at once |
+| **TS project references** | `nx typecheck` checks types in the right order, incrementally |
+| **Task graph + `dependsOn`** | `build`/`test`/`typecheck` run in correct dependency order |
 
 ---
 
-## 🛡️ Granice modułów — Nx pilnuje architektury
+## 🛡️ Module boundaries — Nx guards the architecture
 
-Każdy projekt ma tagi `scope:*` (produkt) i `type:*` (warstwa). Reguła
-[`@nx/enforce-module-boundaries`](eslint.config.mjs) **wywala `nx lint`**, gdy
-ktoś złamie zależności:
+Every project carries `scope:*` (product) and `type:*` (layer) tags. The
+[`@nx/enforce-module-boundaries`](eslint.config.mjs) rule **fails `nx lint`** the
+moment someone violates the allowed dependencies:
 
 ```mermaid
 flowchart LR
@@ -92,15 +92,15 @@ flowchart LR
     style domain fill:#eef3ec,stroke:#5e8a52,color:#20331a
 ```
 
-| Warstwa | może zależeć od | | Zakres | może zależeć od |
+| Layer | may depend on | | Scope | may depend on |
 |---|---|---|---|---|
-| `app` | wszystkie niższe | | `shared` | **tylko** `shared` |
+| `app` | all lower layers | | `shared` | **only** `shared` |
 | `feature` | ui, util, domain | | `stair` | stair, shared |
 | `ui` | util, domain | | `planter` | planter, shared |
 | `domain` | domain | | | |
 
-➡️ **`configurator-*` (shared) fizycznie nie może zależeć od schodów**, a jeden
-konfigurator nie sięgnie do kodu drugiego. Naruszenie = czerwone CI:
+➡️ **`configurator-*` (shared) physically cannot depend on the stairs**, and no
+configurator can reach into another's code. A violation turns CI red:
 
 ```
 error  A project tagged "scope:shared" can only depend on libs tagged "scope:shared"
@@ -109,79 +109,79 @@ error  A project tagged "scope:shared" can only depend on libs tagged "scope:sha
 
 ---
 
-## ⚡ Nowy konfigurator jednym poleceniem
+## ⚡ A new configurator with one command
 
-Sercem ekosystemu jest **własny generator Nx** (`configurator-plugin`). Komponuje
-oficjalne generatory `@nx/js`/`@nx/react` i nakłada szablony, tworząc kompletny,
-**działający od razu** konfigurator podpięty pod kit:
+The heart of the ecosystem is a **custom Nx generator** (`configurator-plugin`).
+It composes the official `@nx/js`/`@nx/react` generators and overlays templates
+to produce a complete, **immediately runnable** configurator wired to the kit:
 
 ```bash
-npx nx g @nxgen/configurator-plugin:configurator biurko \
-  --displayName "Biurko" --description "Konfigurator biurek 3D"
+npx nx g @nxgen/configurator-plugin:configurator desk \
+  --displayName "Desk" --description "3D desk configurator"
 ```
 
 ```mermaid
 flowchart LR
-    CMD(["nx g …:configurator biurko"]):::c --> A["apps/biurko"]:::o
-    CMD --> D["libs/biurko-domain"]:::o
-    CMD --> SC["libs/biurko-scene"]:::o
-    A -. importuje .-> KIT[["configurator kit<br/>core · 3d · ui-kit"]]:::k
-    SC -. importuje .-> KIT
-    D  -. importuje .-> KIT
+    CMD(["nx g …:configurator desk"]):::c --> A["apps/desk"]:::o
+    CMD --> D["libs/desk-domain"]:::o
+    CMD --> SC["libs/desk-scene"]:::o
+    A -. imports .-> KIT[["configurator kit<br/>core · 3d · ui-kit"]]:::k
+    SC -. imports .-> KIT
+    D  -. imports .-> KIT
     classDef c fill:#b2542b,color:#fff;
     classDef o fill:#fff,stroke:#b2542b,color:#8a3f1f;
     classDef k fill:#eef3ec,stroke:#5e8a52,color:#20331a;
 ```
 
-Dokładnie tak powstało **`apps/planter`** — dowód reużywalności. Podmieniasz
-geometrię i parametry na właściwe dla produktu; canvas, kamerę, HDRI, cienie,
-eksport GLB, chrome UI i walidację dostajesz z bibliotek.
+This is exactly how **`apps/planter`** was created — proof of reuse. You swap in
+the product's geometry and parameters; the canvas, camera, HDRI, shadows, GLB
+export, UI chrome and validation all come from the libraries.
 
 ---
 
-## 🚀 Cache i `affected` — Nx robi tylko to, co trzeba
+## 🚀 `affected` & caching — Nx does only what's needed
 
-Graf zależności napędza też skalowanie. Zmiana w `stair-domain` uruchamia
-**wyłącznie** łańcuch schodów — `planter` i kit nie są ruszane:
+The dependency graph also drives scaling. A change in `stair-domain` runs
+**only** the stair chain — `planter` and the kit are left untouched:
 
 ```bash
 $ nx affected -t build --files=libs/stair-domain/src/lib/metrics.ts
    ✔ @nxgen/stair-domain   @nxgen/stair-geometry
    ✔ @nxgen/stair-scene    @nxgen/stairgen
-     (planter, ui-kit, configurator-* — pominięte)
+     (planter, ui-kit, configurator-* — skipped)
 ```
 
-Drugie uruchomienie tego samego zadania to **trafienie w cache** (0 ms). CI
-([`ci.yml`](.github/workflows/ci.yml)) używa `nx affected`, więc PR liczy tylko
-to, co zmienione i ich zależnych.
+Running the same task again is a **cache hit** (0 ms). CI
+([`ci.yml`](.github/workflows/ci.yml)) uses `nx affected`, so a PR only builds
+what changed and its dependents.
 
 ---
 
-## 🗂️ Struktura
+## 🗂️ Structure
 
 ```
 apps/
-  stairgen/            # konfigurator schodów kręconych (WT §68, eksport GLB)
-  planter/             # wygenerowany generatorem — dowód reużywalności
+  stairgen/            # spiral-stair configurator (WT §68, GLB export)
+  planter/             # produced by the generator — proof of reuse
 libs/
-  configurator-core/   # scope:shared  · store factory, presety, silnik walidacji
-  configurator-3d/     # scope:shared  · R3F: canvas, kamera, HDRI, eksport GLB, materiały
-  ui-kit/              # scope:shared  · chrome UI, motyw Leva, CSS powłoki
-  stair-domain/        # scope:stair   · typy, defaults, presety, metryki, reguły WT §68
-  stair-geometry/      # scope:stair   · buildery geometrii three.js
-  stair-scene/         # scope:stair   · komponenty R3F (StairModel …)
-  configurator-plugin/ # scope:tooling · plugin Nx z generatorem `configurator`
+  configurator-core/   # scope:shared  · store factory, presets, validation engine
+  configurator-3d/     # scope:shared  · R3F: canvas, camera, HDRI, GLB export, materials
+  ui-kit/              # scope:shared  · UI chrome, Leva theme, shell CSS
+  stair-domain/        # scope:stair   · types, defaults, presets, metrics, WT §68 rules
+  stair-geometry/      # scope:stair   · three.js geometry builders
+  stair-scene/         # scope:stair   · R3F components (StairModel …)
+  configurator-plugin/ # scope:tooling · Nx plugin with the `configurator` generator
 ```
 
-## 🛠️ Komendy
+## 🛠️ Commands
 
 ```bash
-npm install                                   # instalacja (npm workspaces)
-npx nx serve  @nxgen/stairgen                 # dev server + HMR przez biblioteki
-npx nx graph                                  # interaktywny graf projektów
-npx nx run-many -t lint test build typecheck  # cała praca, z cache
-npx nx affected -t lint test build            # tylko to, co dotknięte zmianą
-npx nx g @nxgen/configurator-plugin:configurator <nazwa>   # nowy konfigurator
+npm install                                   # install (npm workspaces)
+npx nx serve  @nxgen/stairgen                 # dev server + HMR across libraries
+npx nx graph                                  # interactive project graph
+npx nx run-many -t lint test build typecheck  # everything, cached
+npx nx affected -t lint test build            # only what a change touched
+npx nx g @nxgen/configurator-plugin:configurator <name>   # new configurator
 ```
 
 ## 🧱 Stack
@@ -190,4 +190,4 @@ npx nx g @nxgen/configurator-plugin:configurator <nazwa>   # nowy konfigurator
 **Vite 8** · **Vitest** · **React Three Fiber 9 / three.js** · **Leva** ·
 **Zustand** · **TypeScript** (strict).
 
-<div align="center"><sub>Stairgen · konfigurator betonowych / drewnianych / stalowych schodów kręconych z ciągłym podniebieniem, walidowany na żywo wg <i>Warunków Technicznych §68</i>, z eksportem do glTF 2.0 (PBR + round-trip config).</sub></div>
+<div align="center"><sub>Stairgen · a configurator for concrete / timber / steel spiral stairs with a continuous soffit, validated live against Polish building code (<i>Warunki Techniczne §68</i>), exporting to glTF 2.0 (PBR + round-trip config).</sub></div>
