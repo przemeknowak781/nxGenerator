@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Configurator",
+  "title": "Nowy konfigurator 3D",
+  "description": "Tworzy aplikację konfiguratora oraz biblioteki domeny i sceny, podpięte pod @nxgen/configurator-core, @nxgen/configurator-3d i @nxgen/ui-kit.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nazwa produktu/konfiguratora (kebab-case), np. 'planter'.",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Nazwa konfiguratora (np. planter)?"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Etykieta marki widoczna w UI (domyślnie od nazwy)."
+    },
+    "description": {
+      "type": "string",
+      "description": "Podtytuł/tagline w pasku górnym.",
+      "default": "Konfigurator 3D"
+    }
+  },
+  "required": ["name"]
+}

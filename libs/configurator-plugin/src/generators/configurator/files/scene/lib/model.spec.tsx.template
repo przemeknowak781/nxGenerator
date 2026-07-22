@@ -1,0 +1,8 @@
+import { describe, it, expect } from 'vitest';
+import { <%= className %>Model } from './model';
+
+describe('<%= className %>Model', () => {
+  it('is a component', () => {
+    expect(typeof <%= className %>Model).toBe('function');
+  });
+});

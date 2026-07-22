@@ -1,0 +1,91 @@
+import type { StairConfig, MaterialConfig } from './types';
+
+const mat = (
+  preset: MaterialConfig['preset'],
+  baseColor: string,
+  roughness: number,
+  metallic: number,
+): MaterialConfig => ({ preset, baseColor, roughness, metallic, textureScale: 1 });
+
+export const DEFAULT_CONFIG: StairConfig = {
+  totalHeight: 2900,
+  sweepAngle: 360,
+  direction: 'CW',
+  outerRadius: 800,
+  walkLineRatio: 0.5,
+
+  stepCount: 16,
+  stepCountAuto: true,
+  stepThickness: 40,
+  nosingType: 'rounded',
+  nosingRadius: 8,
+  chamferSize: 4,
+  nosingOvershoot: 20,
+  edgeRoundingTop: 2,
+  edgeRoundingBottom: 2,
+  topFinish: 'flat',
+
+  soffitMode: 'smooth_helix',
+  soffitThickness: 120,
+  soffitInset: 0.1,
+  risersEnabled: false,
+
+  columnType: 'solid',
+  columnDiameter: 140,
+  columnWallThickness: 6,
+  columnTopCap: 'flat',
+  columnBottomBase: 'flange',
+  columnBaseDiameter: 260,
+  columnBaseHeight: 20,
+
+  landingShape: 'quarter',
+  landingWidth: 900,
+  landingDepth: 900,
+  landingOverhang: 0,
+  landingThickness: 40,
+  landingEdgeProfile: 'bullnose',
+
+  railingEnabled: true,
+  railingHeight: 1000,
+  railingSide: 'outer',
+  fillType: 'vertical_bars',
+  barSpacing: 110,
+  barDiameter: 14,
+  barProfile: 'round',
+  glassThickness: 10,
+  cableCount: 6,
+  cableDiameter: 6,
+  bottomRailEnabled: false,
+  bottomRailHeight: 100,
+  handrailProfile: 'round',
+  handrailDiameter: 42,
+  handrailOffsetFromPost: 60,
+
+  materials: {
+    step:     mat('oak_natural',   '#b68654', 0.55, 0.0),
+    soffit:   mat('concrete_grey', '#cccccc', 0.85, 0.0),
+    column:   mat('steel_black',   '#1a1a1a', 0.4,  1.0),
+    bars:     mat('steel_black',   '#1a1a1a', 0.4,  1.0),
+    handrail: mat('steel_inox',    '#c8c8c8', 0.3,  1.0),
+    landing:  mat('oak_natural',   '#b68654', 0.55, 0.0),
+    glass:    mat('custom',        '#e8f0f5', 0.05, 0.0),
+  },
+
+  envPreset: 'studio',
+  envIntensity: 1,
+  backgroundMode: 'gradient',
+  backgroundColor: '#1a1d22',
+  shadowsEnabled: true,
+  shadowSoftness: 0.7,
+  cameraPreset: 'hero',
+
+  buildingType: 'residential',
+  showValidationOverlay: true,
+
+  exportFormat: 'glb',
+  exportIncludeMaterials: true,
+  exportDraco: false,
+  exportUnitScale: 'meters',
+  exportIncludeMetadata: true,
+  exportScreenshotPNG: false,
+};

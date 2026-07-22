@@ -1,0 +1,11 @@
+import { createConfiguratorStore } from '@nxgen/configurator-core';
+import { DEFAULT_CONFIG, applyPreset } from '@nxgen/<%= name %>-domain';
+
+/** <%= displayName %> configurator store — an instance of the shared factory. */
+export const use<%= className %>Store = createConfiguratorStore(DEFAULT_CONFIG);
+
+/** Merge a preset (by id) onto the current config and commit it. */
+export function apply<%= className %>Preset(id: string): void {
+  const { config, setConfig } = use<%= className %>Store.getState();
+  setConfig(applyPreset(config, id));
+}

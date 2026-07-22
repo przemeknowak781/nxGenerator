@@ -1,0 +1,56 @@
+import { useControls, folder } from 'leva';
+import { usePlanterStore } from './store';
+
+/** Product-specific Leva schema. Chrome + theme come from @nxgen/ui-kit. */
+export function ControlPanel() {
+  const cfg = usePlanterStore.getState().config;
+  const update = usePlanterStore((s) => s.update);
+
+  useControls(() => ({
+    Wymiary: folder({
+      width: {
+        value: cfg.width,
+        min: 100,
+        max: 1500,
+        step: 10,
+        onChange: (v: number) => update({ width: v }),
+      },
+      depth: {
+        value: cfg.depth,
+        min: 100,
+        max: 1500,
+        step: 10,
+        onChange: (v: number) => update({ depth: v }),
+      },
+      height: {
+        value: cfg.height,
+        min: 100,
+        max: 2400,
+        step: 10,
+        onChange: (v: number) => update({ height: v }),
+      },
+    }),
+    Materiał: folder({
+      color: {
+        value: cfg.color,
+        onChange: (v: string) => update({ color: v }),
+      },
+      roughness: {
+        value: cfg.roughness,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        onChange: (v: number) => update({ roughness: v }),
+      },
+      metallic: {
+        value: cfg.metallic,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        onChange: (v: number) => update({ metallic: v }),
+      },
+    }),
+  }));
+
+  return null;
+}

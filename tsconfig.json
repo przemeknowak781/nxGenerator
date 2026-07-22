@@ -1,0 +1,41 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/stairgen"
+    },
+    {
+      "path": "./libs/configurator-core"
+    },
+    {
+      "path": "./libs/stair-domain"
+    },
+    {
+      "path": "./libs/stair-geometry"
+    },
+    {
+      "path": "./libs/configurator-3d"
+    },
+    {
+      "path": "./libs/ui-kit"
+    },
+    {
+      "path": "./libs/stair-scene"
+    },
+    {
+      "path": "./libs/configurator-plugin"
+    },
+    {
+      "path": "./libs/planter-domain"
+    },
+    {
+      "path": "./libs/planter-scene"
+    },
+    {
+      "path": "./apps/planter"
+    }
+  ],
+  "compilerOptions": {}
+}

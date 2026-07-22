@@ -1,0 +1,21 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { use<%= className %>Store, apply<%= className %>Preset } from './store';
+import { DEFAULT_CONFIG } from '@nxgen/<%= name %>-domain';
+
+describe('<%= displayName %> store', () => {
+  beforeEach(() => use<%= className %>Store.getState().reset());
+
+  it('boots on the default config', () => {
+    expect(use<%= className %>Store.getState().config).toEqual(DEFAULT_CONFIG);
+  });
+
+  it('update() patches a field', () => {
+    use<%= className %>Store.getState().update({ height: 1234 });
+    expect(use<%= className %>Store.getState().config.height).toBe(1234);
+  });
+
+  it('applyPreset merges a preset', () => {
+    apply<%= className %>Preset('tall');
+    expect(use<%= className %>Store.getState().config.height).toBeGreaterThan(DEFAULT_CONFIG.height);
+  });
+});

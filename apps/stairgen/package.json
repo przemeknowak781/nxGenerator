@@ -1,0 +1,8 @@
+{
+  "name": "@nxgen/stairgen",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "tags": ["scope:stair", "type:app"]
+  }
+}

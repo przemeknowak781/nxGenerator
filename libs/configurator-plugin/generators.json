@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "configurator-plugin",
+  "version": "0.0.1",
+  "generators": {
+    "configurator": {
+      "factory": "./src/generators/configurator/configurator",
+      "schema": "./src/generators/configurator/schema.json",
+      "description": "Scaffold a new 3D configurator (app + domain lib + scene lib) wired to the shared configurator kit."
+    }
+  }
+}
