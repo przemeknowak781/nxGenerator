@@ -10,6 +10,6 @@ export function Soffit({ cfg }: { cfg: StairConfig }) {
     cfg.columnDiameter, cfg.stepThickness, cfg.direction,
   ]);
   const mat = useMemo(() => buildStandardMaterial(cfg.materials.soffit), [cfg.materials.soffit]);
-  if (geom.getAttribute('position') === undefined) return null;
+  if (!geom.getAttribute('position')?.count) return null;
   return <mesh geometry={geom} material={mat} castShadow receiveShadow />;
 }

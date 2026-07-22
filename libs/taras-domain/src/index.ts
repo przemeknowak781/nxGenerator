@@ -4,7 +4,8 @@ import { runRules, type Rule, type Issue, type PresetRef } from '@nxgen/configur
 export interface TarasConfig {
   deckWidth: number; // across the boards (X)
   deckLength: number; // along the boards (Z)
-  deckHeight: number; // elevation of the deck surface above ground
+  /** Elevation of the walking surface (top of boards) above ground. */
+  deckHeight: number;
 
   boardWidth: number;
   boardThickness: number;
@@ -40,7 +41,9 @@ const PRESETS: TarasPreset[] = [
   {
     id: 'naziemny_sosna',
     label: 'Naziemny · sosna',
-    patch: { deckHeight: 150, boardWidth: 120, boardThickness: 25, joistSpacing: 450, color: '#c8a06a' },
+    // Ground-level deck: low joists (45×70 laid on pads) so the whole build-up
+    // fits inside the 150 mm surface elevation.
+    patch: { deckHeight: 150, boardWidth: 120, boardThickness: 25, joistSpacing: 450, joistHeight: 70, color: '#c8a06a' },
   },
   {
     id: 'wyniesiony_modrzew',
@@ -77,6 +80,20 @@ export function computeSummary(c: TarasConfig): TarasSummary {
 }
 
 const rules: Rule<TarasConfig>[] = [
+  // The structural build-up (board + joist) must fit above ground within the
+  // declared surface elevation — otherwise joists end up below grade.
+  (c) => {
+    const buildUp = c.boardThickness + c.joistHeight;
+    return c.deckHeight < buildUp
+      ? {
+          id: 'structure_height',
+          rule: 'structure_fits_height',
+          severity: 'error',
+          field: 'deckHeight',
+          message: `Konstrukcja (deska ${c.boardThickness} mm + legar ${c.joistHeight} mm = ${buildUp} mm) nie mieści się w wysokości tarasu ${c.deckHeight} mm.`,
+        }
+      : null;
+  },
   // Deflection: joist spacing must stay proportional to board thickness.
   (c) => {
     const maxSpacing = c.boardThickness * 20;

@@ -10,5 +10,8 @@ export function Column({ cfg }: { cfg: StairConfig }) {
     cfg.totalHeight,
   ]);
   const mat = useMemo(() => buildStandardMaterial(cfg.materials.column), [cfg.materials.column]);
+  // Element disabled → empty geometry; skip the mesh so three.js
+  // never computes a NaN bounding sphere and the GLB export stays clean.
+  if (!geom.getAttribute('position')?.count) return null;
   return <mesh geometry={geom} material={mat} castShadow receiveShadow />;
 }

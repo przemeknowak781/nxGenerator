@@ -9,5 +9,8 @@ export function Landing({ cfg }: { cfg: StairConfig }) {
     cfg.sweepAngle, cfg.outerRadius, cfg.totalHeight, cfg.direction,
   ]);
   const mat = useMemo(() => buildStandardMaterial(cfg.materials.landing), [cfg.materials.landing]);
+  // Element disabled → empty geometry; skip the mesh so three.js
+  // never computes a NaN bounding sphere and the GLB export stays clean.
+  if (!geom.getAttribute('position')?.count) return null;
   return <mesh geometry={geom} material={mat} castShadow receiveShadow />;
 }
