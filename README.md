@@ -128,9 +128,13 @@ flowchart LR
     classDef k fill:#eef3ec,stroke:#5e8a52,color:#20331a;
 ```
 
-This is exactly how `apps/planter` came to be — the proof of reuse. You supply
-the product's geometry and parameters; the canvas, camera, HDRI, shadows, GLB
-export, UI chrome and validation all arrive from the libraries.
+This is exactly how `apps/planter` and `apps/taras` came to be — the proof of
+reuse. You supply the product's geometry and parameters; the canvas, camera,
+HDRI, shadows, GLB export, UI chrome and validation all arrive from the
+libraries.
+
+See **[Creating a configurator](docs/creating-a-configurator.md)** for the full
+walkthrough — the three files you own, worked through the wooden-deck example.
 
 <div align="center">· · ·</div>
 
