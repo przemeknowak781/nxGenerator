@@ -14,5 +14,8 @@ export function Balustrade({ cfg }: { cfg: StairConfig }) {
   const bars = useMemo(() => buildStandardMaterial(cfg.materials.bars), [cfg.materials.bars]);
   const glass = useMemo(() => buildStandardMaterial(cfg.materials.glass), [cfg.materials.glass]);
   const material = cfg.fillType === 'glass' || cfg.fillType === 'panels' ? glass : bars;
+  // Element disabled → empty geometry; skip the mesh so three.js
+  // never computes a NaN bounding sphere and the GLB export stays clean.
+  if (!geom.getAttribute('position')?.count) return null;
   return <mesh geometry={geom} material={material} castShadow receiveShadow />;
 }

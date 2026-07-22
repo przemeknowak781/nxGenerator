@@ -42,9 +42,13 @@ export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) 
     () => new BoxGeometry(spanW, joistHeight, JOIST_THICKNESS),
     [spanW, joistHeight],
   );
+  // deckHeight is the elevation of the walking surface (top of boards); the
+  // frame stacks downward from it: boards, then joists, then posts to ground.
+  const frameTop = deckHeight - boardThickness;
+  const postHeight = Math.max(frameTop - joistHeight, 1);
   const postGeom = useMemo(
-    () => new BoxGeometry(POST, Math.max(deckHeight - joistHeight, 1), POST),
-    [deckHeight, joistHeight],
+    () => new BoxGeometry(POST, postHeight, POST),
+    [postHeight],
   );
 
   const boardXs = useMemo(
@@ -56,9 +60,9 @@ export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) 
     [joists, deckLength],
   );
 
-  const boardY = deckHeight + boardThickness / 2;
-  const joistY = deckHeight - joistHeight / 2;
-  const postY = Math.max(deckHeight - joistHeight, 1) / 2;
+  const boardY = deckHeight - boardThickness / 2;
+  const joistY = frameTop - joistHeight / 2;
+  const postY = postHeight / 2;
   const px = spanW / 2 - POST / 2;
   const pz = deckLength / 2 - POST / 2;
 

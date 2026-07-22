@@ -31,4 +31,24 @@ describe('Taras domain', () => {
     expect(s.boards).toBeGreaterThan(0);
     expect(s.areaM2).toBeCloseTo(12, 0);
   });
+
+  it('structure must fit within deck height (no below-grade joists)', () => {
+    const issues = validate({ ...DEFAULT_CONFIG, deckHeight: 100, boardThickness: 28, joistHeight: 140 });
+    expect(issues.find((i) => i.rule === 'structure_fits_height')?.severity).toBe('error');
+  });
+
+  it('every preset produces a valid configuration', () => {
+    for (const id of ['naziemny_sosna', 'wyniesiony_modrzew', 'egzotyczny_bangkirai']) {
+      expect(validate(applyPreset(DEFAULT_CONFIG, id)), id).toHaveLength(0);
+    }
+  });
+
+  it('boards never overhang the configured deck width', () => {
+    for (const id of ['naziemny_sosna', 'wyniesiony_modrzew', 'egzotyczny_bangkirai']) {
+      const c = applyPreset(DEFAULT_CONFIG, id);
+      const { boards } = computeSummary(c);
+      const spanW = boards * c.boardWidth + (boards - 1) * c.boardGap;
+      expect(spanW, id).toBeLessThanOrEqual(c.deckWidth);
+    }
+  });
 });
