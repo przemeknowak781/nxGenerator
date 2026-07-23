@@ -28,9 +28,22 @@ describe('buildStepGeometry', () => {
     expect(g.boundingBox!.min.y).toBeCloseTo(3 * rise - cfg.stepThickness, 1);
   });
 
-  it('has an index buffer', () => {
+  it('tread top/bottom carry flat, un-bled normals', () => {
+    // A solid tread has a flat top (+Y) and flat bottom (-Y). If the mesh shared
+    // vertices between those faces and the vertical walls, computeVertexNormals
+    // would average them and NO vertex would read a pure ±Y — the bug that bled
+    // a false gradient across the step. De-indexed, the flat faces are crisp.
     const g = buildStepGeometry(DEFAULT_CONFIG, 0);
-    expect(g.getIndex()).not.toBeNull();
+    const nrm = g.getAttribute('normal');
+    let up = 0;
+    let down = 0;
+    for (let i = 0; i < nrm.count; i++) {
+      const ny = nrm.getY(i);
+      if (ny > 0.999) up++;
+      else if (ny < -0.999) down++;
+    }
+    expect(up, 'flat top vertices (+Y)').toBeGreaterThan(20);
+    expect(down, 'flat bottom vertices (-Y)').toBeGreaterThan(20);
   });
 });
 

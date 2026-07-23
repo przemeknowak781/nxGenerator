@@ -112,6 +112,12 @@ export function buildStepGeometry(cfg: StairConfig, k: number): BufferGeometry {
   const g = new BufferGeometry();
   g.setAttribute('position', new Float32BufferAttribute(positions, 3));
   g.setIndex(indices);
-  g.computeVertexNormals();
-  return g;
+  // The tread shares vertices between its flat top/bottom and the vertical
+  // side walls and risers. computeVertexNormals on that shared mesh averages a
+  // face normal (+Y) with the wall normals, bleeding a false gradient across
+  // the step surface. De-index first so every face keeps its own vertices →
+  // correct per-face normals: the planar top/bottom stay perfectly flat.
+  const solid = g.toNonIndexed();
+  solid.computeVertexNormals();
+  return solid;
 }
