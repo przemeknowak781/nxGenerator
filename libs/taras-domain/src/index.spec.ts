@@ -32,9 +32,21 @@ describe('Taras domain', () => {
     expect(s.areaM2).toBeCloseTo(12, 0);
   });
 
-  it('structure must fit within deck height (no below-grade joists)', () => {
-    const issues = validate({ ...DEFAULT_CONFIG, deckHeight: 100, boardThickness: 28, joistHeight: 140 });
+  it('structure (board + joist + bearer beam) must fit within deck height', () => {
+    const issues = validate({ ...DEFAULT_CONFIG, deckHeight: 100, boardThickness: 28, joistHeight: 140, beamHeight: 120 });
     expect(issues.find((i) => i.rule === 'structure_fits_height')?.severity).toBe('error');
+  });
+
+  it('the bearer beam counts toward the build-up', () => {
+    // Board 28 + joist 140 = 168 fits in 200, but + beam 120 = 288 does not.
+    const base = { ...DEFAULT_CONFIG, deckHeight: 200, boardThickness: 28, joistHeight: 140 };
+    expect(validate({ ...base, beamHeight: 20 }).find((i) => i.rule === 'structure_fits_height')).toBeUndefined();
+    expect(validate({ ...base, beamHeight: 120 }).find((i) => i.rule === 'structure_fits_height')?.severity).toBe('error');
+  });
+
+  it('a low railing warns, and disabling the railing clears it', () => {
+    expect(validate({ ...DEFAULT_CONFIG, railingEnabled: true, railingHeight: 800 }).find((i) => i.rule === 'railing_height_min')?.severity).toBe('warn');
+    expect(validate({ ...DEFAULT_CONFIG, railingEnabled: false, railingHeight: 800 }).find((i) => i.rule === 'railing_height_min')).toBeUndefined();
   });
 
   it('every preset produces a valid configuration', () => {

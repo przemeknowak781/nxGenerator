@@ -20,6 +20,11 @@ export function ControlPanel() {
     Konstrukcja: folder({
       joistSpacing: { value: cfg.joistSpacing, min: 300, max: 900, step: 10, onChange: (v: number) => update({ joistSpacing: v }) },
       joistHeight:  { value: cfg.joistHeight,  min: 100, max: 220, step: 5,  onChange: (v: number) => update({ joistHeight: v }) },
+      beamHeight:   { value: cfg.beamHeight,   min: 80,  max: 240, step: 10, onChange: (v: number) => update({ beamHeight: v }) },
+    }),
+    Balustrada: folder({
+      railingEnabled: { value: cfg.railingEnabled, onChange: (v: boolean) => update({ railingEnabled: v }) },
+      railingHeight:  { value: cfg.railingHeight,  min: 700, max: 1200, step: 10, onChange: (v: number) => update({ railingHeight: v }) },
     }),
     Materiał: folder({
       color:     { value: cfg.color, onChange: (v: string) => update({ color: v }) },

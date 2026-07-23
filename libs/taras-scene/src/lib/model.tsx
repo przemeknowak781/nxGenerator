@@ -10,15 +10,27 @@ export interface TarasModelProps {
 }
 
 const JOIST_THICKNESS = 45;
+const BEAM_THICKNESS = 90; // bearer beam width
 const POST = 90;
+const RAILPOST = 70;
+const RAILH = 45; // railing rail section
+
+function spread(count: number, half: number): number[] {
+  if (count < 2) return [0];
+  return Array.from({ length: count }, (_, i) => -half + (i * 2 * half) / (count - 1));
+}
 
 /**
- * Parametric wooden deck: a run of top boards over a joist substructure carried
- * by corner posts. Board count and joist count come from the domain's
- * `computeSummary`, so the model and the validator always agree.
+ * Parametric wooden deck. Structure, bottom-up: posts → bearer beams
+ * (podwaliny) → joists → boards, plus an optional perimeter railing. Board and
+ * joist counts come from the domain's `computeSummary`, so the model and the
+ * validator always agree.
  */
 export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) {
-  const { deckLength, deckHeight, boardWidth, boardThickness, boardGap, joistHeight } = config;
+  const {
+    deckLength, deckHeight, boardWidth, boardThickness, boardGap,
+    joistHeight, beamHeight, railingEnabled, railingHeight,
+  } = config;
   const { boards, joists } = computeSummary(config);
 
   const deckMat = useMemo(
@@ -32,51 +44,87 @@ export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) 
   }, [config.color]);
 
   const pitch = boardWidth + boardGap;
-  const spanW = boards * boardWidth + (boards - 1) * boardGap; // actual covered width
+  const spanW = boards * boardWidth + (boards - 1) * boardGap; // covered width
 
-  const boardGeom = useMemo(
-    () => new BoxGeometry(boardWidth, boardThickness, deckLength),
-    [boardWidth, boardThickness, deckLength],
-  );
-  const joistGeom = useMemo(
-    () => new BoxGeometry(spanW, joistHeight, JOIST_THICKNESS),
-    [spanW, joistHeight],
-  );
-  // deckHeight is the elevation of the walking surface (top of boards); the
-  // frame stacks downward from it: boards, then joists, then posts to ground.
-  const frameTop = deckHeight - boardThickness;
-  const postHeight = Math.max(frameTop - joistHeight, 1);
-  const postGeom = useMemo(
-    () => new BoxGeometry(POST, postHeight, POST),
-    [postHeight],
-  );
+  // deckHeight is the walking surface (top of boards); the frame stacks down:
+  // boards, joists, bearer beams, then posts to the ground.
+  const frameTop = deckHeight - boardThickness; // = joist top
+  const joistBottom = frameTop - joistHeight;
+  const beamCenterY = joistBottom - beamHeight / 2;
+  const beamBottom = joistBottom - beamHeight;
+  const postHeight = Math.max(beamBottom, 1);
 
-  const boardXs = useMemo(
-    () => Array.from({ length: boards }, (_, i) => -spanW / 2 + boardWidth / 2 + i * pitch),
-    [boards, spanW, boardWidth, pitch],
-  );
-  const joistZs = useMemo(
-    () => Array.from({ length: joists }, (_, i) => -deckLength / 2 + (i * deckLength) / (joists - 1)),
-    [joists, deckLength],
-  );
+  // --- Geometries ---
+  const boardGeom = useMemo(() => new BoxGeometry(boardWidth, boardThickness, deckLength), [boardWidth, boardThickness, deckLength]);
+  const joistGeom = useMemo(() => new BoxGeometry(spanW, joistHeight, JOIST_THICKNESS), [spanW, joistHeight]);
+  const beamGeom = useMemo(() => new BoxGeometry(BEAM_THICKNESS, beamHeight, deckLength), [beamHeight, deckLength]);
+  const postGeom = useMemo(() => new BoxGeometry(POST, postHeight, POST), [postHeight]);
+
+  // --- Positions ---
+  const boardXs = useMemo(() => Array.from({ length: boards }, (_, i) => -spanW / 2 + boardWidth / 2 + i * pitch), [boards, spanW, boardWidth, pitch]);
+  const joistZs = useMemo(() => spread(joists, deckLength / 2), [joists, deckLength]);
+
+  // Two bearer beams run along the length, inset from the edge, under the joists.
+  const bearerX = Math.max(spanW / 2 - Math.min(spanW * 0.18, 450), BEAM_THICKNESS / 2);
+  const bearerXs = [-bearerX, bearerX];
+  // Posts sit under the bearers; more of them for longer decks.
+  const nPostsPerBearer = Math.max(2, Math.round(deckLength / 1800) + 1);
+  const postZs = spread(nPostsPerBearer, deckLength / 2 - 150);
 
   const boardY = deckHeight - boardThickness / 2;
   const joistY = frameTop - joistHeight / 2;
   const postY = postHeight / 2;
-  const px = spanW / 2 - POST / 2;
-  const pz = deckLength / 2 - POST / 2;
+
+  // --- Railing (optional perimeter, corner posts + 3 horizontal rails) ---
+  const railGeom = useMemo(() => {
+    if (!railingEnabled) return null;
+    return {
+      post: new BoxGeometry(RAILPOST, railingHeight, RAILPOST),
+      railX: new BoxGeometry(spanW, RAILH, RAILH),
+      railZ: new BoxGeometry(RAILH, RAILH, deckLength),
+    };
+  }, [railingEnabled, railingHeight, spanW, deckLength]);
+  const railLevels = [railingHeight, railingHeight * 0.62, railingHeight * 0.26].map((h) => deckHeight + h - RAILH / 2);
+  const rpx = spanW / 2 - RAILPOST / 2;
+  const rpz = deckLength / 2 - RAILPOST / 2;
+  const rzEdge = deckLength / 2 - RAILH / 2;
+  const rxEdge = spanW / 2 - RAILH / 2;
 
   return (
     <group name={rootName}>
+      {/* deck boards */}
       {boardXs.map((x, i) => (
         <mesh key={`b${i}`} geometry={boardGeom} material={deckMat} position={[x, boardY, 0]} castShadow receiveShadow />
       ))}
+      {/* joists */}
       {joistZs.map((z, i) => (
         <mesh key={`j${i}`} geometry={joistGeom} material={frameMat} position={[0, joistY, z]} castShadow receiveShadow />
       ))}
-      {[[-px, -pz], [px, -pz], [-px, pz], [px, pz]].map(([x, z], i) => (
-        <mesh key={`p${i}`} geometry={postGeom} material={frameMat} position={[x, postY, z]} castShadow />
+      {/* bearer beams (podwaliny) */}
+      {bearerXs.map((x, i) => (
+        <mesh key={`beam${i}`} geometry={beamGeom} material={frameMat} position={[x, beamCenterY, 0]} castShadow receiveShadow />
       ))}
+      {/* posts under the bearers */}
+      {bearerXs.flatMap((x, bi) =>
+        postZs.map((z, pi) => (
+          <mesh key={`p${bi}-${pi}`} geometry={postGeom} material={frameMat} position={[x, postY, z]} castShadow />
+        )),
+      )}
+
+      {/* railing */}
+      {railGeom && (
+        <group>
+          {[[-rpx, -rpz], [rpx, -rpz], [-rpx, rpz], [rpx, rpz]].map(([x, z], i) => (
+            <mesh key={`rp${i}`} geometry={railGeom.post} material={deckMat} position={[x, deckHeight + railingHeight / 2, z]} castShadow />
+          ))}
+          {railLevels.flatMap((y, li) => [
+            <mesh key={`rxa${li}`} geometry={railGeom.railX} material={deckMat} position={[0, y, -rzEdge]} castShadow />,
+            <mesh key={`rxb${li}`} geometry={railGeom.railX} material={deckMat} position={[0, y, rzEdge]} castShadow />,
+            <mesh key={`rza${li}`} geometry={railGeom.railZ} material={deckMat} position={[-rxEdge, y, 0]} castShadow />,
+            <mesh key={`rzb${li}`} geometry={railGeom.railZ} material={deckMat} position={[rxEdge, y, 0]} castShadow />,
+          ])}
+        </group>
+      )}
     </group>
   );
 }

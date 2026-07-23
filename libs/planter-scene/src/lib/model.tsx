@@ -37,10 +37,11 @@ export function PlanterModel({ config, rootName = 'PlanterRoot' }: PlanterModelP
     [courses, legHeight, boardWidth, pitch],
   );
 
-  // Front/back slats span X; side slats span Z between them (clean corners).
-  const xSlat = useMemo(() => new BoxGeometry(width, boardWidth, boardThickness), [width, boardWidth, boardThickness]);
+  // Slats butt against the corner posts (span the clear distance BETWEEN them)
+  // rather than overlapping them — otherwise the coplanar faces Z-fight.
+  const xSlat = useMemo(() => new BoxGeometry(Math.max(width - 2 * POST, 1), boardWidth, boardThickness), [width, boardWidth, boardThickness]);
   const zSlat = useMemo(
-    () => new BoxGeometry(boardThickness, boardWidth, depth - 2 * boardThickness),
+    () => new BoxGeometry(boardThickness, boardWidth, Math.max(depth - 2 * POST, 1)),
     [boardThickness, boardWidth, depth],
   );
   const postGeom = useMemo(() => new BoxGeometry(POST, height, POST), [height]);
