@@ -17,7 +17,7 @@
   "nx": {
     "tags": [
       "scope:taras",
-      "type:domain"
+      "domain:taras"
     ]
   }
 }

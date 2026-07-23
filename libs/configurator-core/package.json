@@ -16,7 +16,7 @@
   "nx": {
     "tags": [
       "scope:shared",
-      "type:domain"
+      "domain:core"
     ]
   },
   "dependencies": {}

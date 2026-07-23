@@ -16,7 +16,7 @@
   "nx": {
     "tags": [
       "scope:stair",
-      "type:domain"
+      "domain:stair"
     ]
   },
   "dependencies": {}

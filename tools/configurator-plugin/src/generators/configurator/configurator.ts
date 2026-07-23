@@ -55,12 +55,12 @@ export async function configuratorGenerator(tree: Tree, options: ConfiguratorGen
     bundler: 'none',
     unitTestRunner: 'vitest',
     linter: 'none',
-    tags: `${scopeTag},type:domain`,
+    tags: `${scopeTag},domain:${name}`,
     skipFormat: true,
   });
   ensureBundlerResolution(tree, `${domainRoot}/tsconfig.lib.json`);
   ensureBundlerResolution(tree, `${domainRoot}/tsconfig.spec.json`);
-  foldProjectJson(tree, domainRoot, [scopeTag, 'type:domain']);
+  foldProjectJson(tree, domainRoot, [scopeTag, `domain:${name}`]);
   replaceSrc(tree, domainRoot, path.join(__dirname, 'files/domain'), subst);
 
   // 2. Scene library (React + R3F) — the parametric model.
