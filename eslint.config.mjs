@@ -36,36 +36,30 @@ export default [
           // Allow the shared shell stylesheet secondary entry point.
           allow: ['@nxgen/ui-kit/styles.css'],
           depConstraints: [
-            // --- Layer constraints (type:*) ---
+            // --- Layer constraints (type:* + the domain:* model layer) ---
+            // `domain:*` is the lowest layer: the pure product/framework model
+            // (config, presets, rules). Each domain library is tagged with its
+            // own product — domain:stair, domain:taras, domain:planter — plus
+            // the shared engine, domain:core.
             {
               sourceTag: 'type:app',
-              onlyDependOnLibsWithTags: [
-                'type:feature',
-                'type:ui',
-                'type:util',
-                'type:domain',
-              ],
+              onlyDependOnLibsWithTags: ['type:feature', 'type:ui', 'type:util', 'domain:*'],
             },
             {
               sourceTag: 'type:feature',
-              onlyDependOnLibsWithTags: [
-                'type:feature',
-                'type:ui',
-                'type:util',
-                'type:domain',
-              ],
+              onlyDependOnLibsWithTags: ['type:feature', 'type:ui', 'type:util', 'domain:*'],
             },
             {
               sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: ['type:ui', 'type:util', 'type:domain'],
+              onlyDependOnLibsWithTags: ['type:ui', 'type:util', 'domain:*'],
             },
             {
               sourceTag: 'type:util',
-              onlyDependOnLibsWithTags: ['type:util', 'type:domain'],
+              onlyDependOnLibsWithTags: ['type:util', 'domain:*'],
             },
             {
-              sourceTag: 'type:domain',
-              onlyDependOnLibsWithTags: ['type:domain'],
+              sourceTag: 'domain:*',
+              onlyDependOnLibsWithTags: ['domain:*'],
             },
             { sourceTag: 'type:plugin', onlyDependOnLibsWithTags: ['*'] },
 
@@ -77,6 +71,10 @@ export default [
             {
               sourceTag: 'scope:stair',
               onlyDependOnLibsWithTags: ['scope:stair', 'scope:shared'],
+            },
+            {
+              sourceTag: 'scope:taras',
+              onlyDependOnLibsWithTags: ['scope:taras', 'scope:shared'],
             },
             {
               sourceTag: 'scope:planter',

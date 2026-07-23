@@ -78,7 +78,7 @@ moment a dependency crosses a line it shouldn't.
 
 ```mermaid
 flowchart LR
-    app["type:app"] --> feature["type:feature"] --> ui["type:ui"] --> util["type:util"] --> domain["type:domain"]
+    app["type:app"] --> feature["type:feature"] --> ui["type:ui"] --> util["type:util"] --> domain["domain:*"]
     app -.-> ui & util & domain
     feature -.-> util & domain
     ui -.-> domain
@@ -89,10 +89,14 @@ flowchart LR
 
 | Layer | may depend on | | Scope | may depend on |
 |---|---|---|---|---|
-| `app` | all lower layers | | `shared` | only `shared` |
-| `feature` | ui, util, domain | | `stair` | stair, shared |
-| `ui` | util, domain | | `planter` | planter, shared |
-| `domain` | domain | | | |
+| `type:app` | all lower layers | | `shared` | only `shared` |
+| `type:feature` | ui, util, domain:* | | `stair` | stair, shared |
+| `type:ui` | util, domain:* | | `taras` | taras, shared |
+| `type:util` | domain:* | | `planter` | planter, shared |
+| `domain:*` | domain:* | | | |
+
+Each domain library carries its own `domain:<product>` tag — `domain:stair`,
+`domain:taras`, `domain:planter` — plus the shared engine, `domain:core`.
 
 The shared `configurator-*` libraries cannot depend on the stairs, and no
 configurator can reach into another's code. A violation turns CI red:
@@ -161,15 +165,19 @@ only builds what changed and its dependents.
 ```
 apps/
   stairgen/            spiral-stair configurator (WT §68, GLB export)
-  planter/             produced by the generator — proof of reuse
+  taras/               wooden-deck configurator      — produced by the generator
+  planter/             wooden-planter configurator   — produced by the generator
 libs/
-  configurator-core/   scope:shared   store factory, presets, validation engine
-  configurator-3d/     scope:shared   R3F: canvas, camera, HDRI, GLB export, materials
-  ui-kit/              scope:shared   UI chrome, Leva theme, shell CSS
-  stair-domain/        scope:stair    types, defaults, presets, metrics, WT §68 rules
-  stair-geometry/      scope:stair    three.js geometry builders
-  stair-scene/         scope:stair    R3F components (StairModel …)
-  configurator-plugin/ scope:tooling  Nx plugin with the configurator generator
+  configurator-core/   scope:shared   domain:core   store factory, presets, validation engine
+  configurator-3d/     scope:shared   type:ui        R3F: canvas, camera, HDRI, GLB export, materials
+  ui-kit/              scope:shared   type:ui        UI chrome, Leva theme, shell CSS
+  stair-domain/        scope:stair    domain:stair   types, defaults, presets, metrics, WT §68 rules
+  stair-geometry/      scope:stair    type:util      three.js geometry builders
+  stair-scene/         scope:stair    type:feature   R3F components (StairModel …)
+  taras-domain/ …      scope:taras    domain:taras   (+ taras-scene)
+  planter-domain/ …    scope:planter  domain:planter (+ planter-scene)
+tools/
+  configurator-plugin/ scope:tooling  type:plugin    Nx plugin with the configurator generator
 ```
 
 ## Commands

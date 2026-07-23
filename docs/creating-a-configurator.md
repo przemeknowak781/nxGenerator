@@ -45,7 +45,7 @@ plugin's templates. What you get, already wired and green:
 | Created | Tag | Comes wired |
 |---|---|---|
 | `apps/taras` | `scope:taras · type:app` | canvas, HDRI, shadows, orbit controls, GLB export, UI chrome, preset picker, live validation panel, Leva control panel |
-| `libs/taras-domain` | `scope:taras · type:domain` | a placeholder config, one preset, one validation rule, a passing spec |
+| `libs/taras-domain` | `scope:taras · domain:taras` | a placeholder config, one preset, one validation rule, a passing spec |
 | `libs/taras-scene` | `scope:taras · type:feature` | a placeholder box model driven by the config |
 
 The projects import only `@nxgen/*` packages, so the module-boundary rules apply
@@ -177,7 +177,13 @@ Two checks worth making deliberately:
 
 - **Boundaries.** `nx lint` fails if your scene reaches into another product or
   a shared lib depends on yours. The graph should show `taras → kit + taras-*`
-  and no edges to `stair` or `planter`.
+  and no edges to `stair` or `planter`. To give the new product cross-product
+  isolation, add its scope to `eslint.config.mjs` (the generator sets the tags
+  but not the constraint):
+
+  ```js
+  { sourceTag: 'scope:taras', onlyDependOnLibsWithTags: ['scope:taras', 'scope:shared'] },
+  ```
 - **Geometry validity.** Mirror `libs/stair-geometry/src/lib/geometryValidity.spec.ts`:
   for every preset, assert all vertex positions are finite and all indices are
   in range. This is the cheapest guard against a config that silently renders
