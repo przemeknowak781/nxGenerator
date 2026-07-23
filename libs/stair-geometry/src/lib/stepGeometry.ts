@@ -109,6 +109,18 @@ export function buildStepGeometry(cfg: StairConfig, k: number): BufferGeometry {
   }
   indices.push(innerTopRing[N]!, profileRings[P_LAST]![N]!, innerBotRing[N]!);
 
+  // The whole triangle winding above is authored for the CCW helix (sign = -1).
+  // For the CW helix (sign = +1) every face ends up wound backwards, so the
+  // tread top faces down and the bottom faces up. Flip each triangle's winding
+  // to restore outward normals.
+  if (sign === 1) {
+    for (let i = 0; i < indices.length; i += 3) {
+      const tmp = indices[i + 1]!;
+      indices[i + 1] = indices[i + 2]!;
+      indices[i + 2] = tmp;
+    }
+  }
+
   const g = new BufferGeometry();
   g.setAttribute('position', new Float32BufferAttribute(positions, 3));
   g.setIndex(indices);
