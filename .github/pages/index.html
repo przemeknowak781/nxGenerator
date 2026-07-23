@@ -37,10 +37,21 @@
         padding: 22px 22px 20px; transition: border-color .15s, transform .15s;
       }
       a.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .card .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
       .card .idx { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--subtle); }
       .card h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin: 8px 0 6px; }
       .card p { font-size: 13.5px; color: var(--muted); }
       .card .go { margin-top: 14px; font-size: 13px; color: var(--accent-ink); font-weight: 500; }
+      /* roadmap placeholders — inactive, not links */
+      .card.soon { opacity: 0.6; cursor: default; background: transparent; border-style: dashed; }
+      .card.soon:hover { border-color: var(--hairline); transform: none; }
+      .card.soon h2 { color: var(--muted); }
+      .badge {
+        font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--muted); border: 1px solid var(--hairline);
+        border-radius: 100px; padding: 3px 9px; white-space: nowrap;
+      }
+      .card .soon-note { margin-top: 14px; font-size: 13px; color: var(--subtle); font-weight: 500; }
       .foot { border-top: 1px solid var(--hairline); padding-top: 18px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
       .foot a { color: var(--accent-ink); text-decoration: none; }
       .foot a:hover { text-decoration: underline; }
@@ -76,6 +87,60 @@
           <p>Drewniana donica listwowa na nóżkach. Stabilność, objętość ziemi, dobór desek.</p>
           <div class="go">Otwórz konfigurator →</div>
         </a>
+        <div class="card soon">
+          <div class="top"><span class="idx">04</span><span class="badge">Coming soon</span></div>
+          <h2>Pergola</h2>
+          <p>Pergola ogrodowa ze słupów i krokwi. Rozstaw, zadaszenie, kotwienie.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">05</span><span class="badge">Coming soon</span></div>
+          <h2>Ogrodzenie</h2>
+          <p>Płot z desek na słupkach. Rytm sztachet, prześwity, furtka.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">06</span><span class="badge">Coming soon</span></div>
+          <h2>Wiata</h2>
+          <p>Wiata / carport na drewnianej konstrukcji. Więźba, spadki, poszycie.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">07</span><span class="badge">Coming soon</span></div>
+          <h2>Altana</h2>
+          <p>Altana z dachem namiotowym. Geometria więźby, słupy, balustrada.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">08</span><span class="badge">Coming soon</span></div>
+          <h2>Schody proste</h2>
+          <p>Schody policzkowe. Podstopnice, spocznik, balustrada, WT §68.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">09</span><span class="badge">Coming soon</span></div>
+          <h2>Balustrada</h2>
+          <p>Balustrada tarasowa — tralki, pochwyt, rozstaw, mocowania.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">10</span><span class="badge">Coming soon</span></div>
+          <h2>Regał</h2>
+          <p>Regał modułowy z półkami. Nośność, rozpiętość, podziały.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">11</span><span class="badge">Coming soon</span></div>
+          <h2>Brama</h2>
+          <p>Brama wjazdowa dwuskrzydłowa. Wypełnienie, prześwit, zawiasy.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
+        <div class="card soon">
+          <div class="top"><span class="idx">12</span><span class="badge">Coming soon</span></div>
+          <h2>Grządka</h2>
+          <p>Podwyższona grządka skrzyniowa. Pojemność, drenaż, dobór desek.</p>
+          <div class="soon-note">W przygotowaniu</div>
+        </div>
       </div>
 
       <div class="foot">
