@@ -6,7 +6,7 @@ export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/stairgen',
   // Served from a project subpath on GitHub Pages (https://<user>.github.io/nxGenerator/).
-  base: process.env['NODE_ENV'] === 'production' ? '/nxGenerator/' : '/',
+  base: process.env['NODE_ENV'] === 'production' ? '/nxGenerator/stairgen/' : '/',
   server: {
     port: 4200,
     host: 'localhost',

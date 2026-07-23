@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/taras',
+  base: process.env['NODE_ENV'] === 'production' ? '/nxGenerator/taras/' : '/',
   server: {
     port: 4200,
     host: 'localhost',

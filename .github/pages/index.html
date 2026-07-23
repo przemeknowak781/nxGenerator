@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nxGenerator — ekosystem konfiguratorów 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0e0e0c; --muted: #6b6862; --subtle: #9a968e;
+        --paper: #f6f5f1; --surface: #fff; --hairline: #e6e2da;
+        --accent: #b2542b; --accent-ink: #8a3f1f;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        color: var(--ink); background: var(--paper);
+        min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        padding: 48px 24px; line-height: 1.5;
+      }
+      .wrap { width: 100%; max-width: 920px; }
+      .kicker {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-ink);
+      }
+      h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(34px, 6vw, 56px); letter-spacing: -0.01em; margin: 10px 0 14px; }
+      .lede { color: var(--muted); font-size: 17px; max-width: 60ch; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 40px 0 28px; }
+      a.card {
+        display: block; text-decoration: none; color: inherit;
+        background: var(--surface); border: 1px solid var(--hairline); border-radius: 4px;
+        padding: 22px 22px 20px; transition: border-color .15s, transform .15s;
+      }
+      a.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .card .idx { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--subtle); }
+      .card h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin: 8px 0 6px; }
+      .card p { font-size: 13.5px; color: var(--muted); }
+      .card .go { margin-top: 14px; font-size: 13px; color: var(--accent-ink); font-weight: 500; }
+      .foot { border-top: 1px solid var(--hairline); padding-top: 18px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+      .foot a { color: var(--accent-ink); text-decoration: none; }
+      .foot a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="kicker">Ekosystem · Nx monorepo</div>
+      <h1>nxGenerator</h1>
+      <p class="lede">
+        Parametryczne konfiguratory 3D zbudowane na jednym współdzielonym
+        „configurator kit". Każdy produkt to cienka aplikacja + biblioteki domeny
+        i sceny — reszta (canvas, kamera, HDRI, eksport GLB, walidacja) pochodzi
+        z kitu. Poniżej trzy żywe konfiguratory z tego samego pipeline'u.
+      </p>
+
+      <div class="grid">
+        <a class="card" href="./stairgen/">
+          <div class="idx">01</div>
+          <h2>Stairgen</h2>
+          <p>Schody kręcone z pełnym podniebieniem. Walidacja na żywo wg WT §68, eksport glTF.</p>
+          <div class="go">Otwórz konfigurator →</div>
+        </a>
+        <a class="card" href="./taras/">
+          <div class="idx">02</div>
+          <h2>Taras</h2>
+          <p>Taras drewniany — deski na ruszcie legarów. Reguły ugięcia i odwodnienia.</p>
+          <div class="go">Otwórz konfigurator →</div>
+        </a>
+        <a class="card" href="./planter/">
+          <div class="idx">03</div>
+          <h2>Donica</h2>
+          <p>Drewniana donica listwowa na nóżkach. Stabilność, objętość ziemi, dobór desek.</p>
+          <div class="go">Otwórz konfigurator →</div>
+        </a>
+      </div>
+
+      <div class="foot">
+        <span>Nx 23 · React 19 · React Three Fiber · TypeScript</span>
+        <a href="https://github.com/przemeknowak781/nxGenerator">Kod źródłowy na GitHubie</a>
+      </div>
+    </main>
+  </body>
+</html>

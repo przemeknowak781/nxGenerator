@@ -1,4 +1,4 @@
-name: Deploy stairgen to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -24,11 +24,26 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: npm ci
-      - run: npx nx build @nxgen/stairgen
+
+      # Build every configurator; each is served from its own subpath
+      # (vite `base` = /nxGenerator/<app>/).
+      - run: npx nx run-many -t build -p @nxgen/stairgen @nxgen/taras @nxgen/planter
+
+      # Assemble the published site: a landing page + one folder per app.
+      - name: Assemble site
+        run: |
+          mkdir -p public
+          cp .github/pages/index.html public/index.html
+          cp -r apps/stairgen/dist public/stairgen
+          cp -r apps/taras/dist    public/taras
+          cp -r apps/planter/dist  public/planter
+
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/stairgen/dist
+          path: public
 
   deploy:
     needs: build
