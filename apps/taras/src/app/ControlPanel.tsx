@@ -25,6 +25,7 @@ export function ControlPanel() {
     Balustrada: folder({
       railingEnabled: { value: cfg.railingEnabled, onChange: (v: boolean) => update({ railingEnabled: v }) },
       railingHeight:  { value: cfg.railingHeight,  min: 700, max: 1200, step: 10, onChange: (v: number) => update({ railingHeight: v }) },
+      balusterGap:    { value: cfg.balusterGap,    min: 60,  max: 300,  step: 5,  onChange: (v: number) => update({ balusterGap: v }) },
     }),
     Materiał: folder({
       color:     { value: cfg.color, onChange: (v: string) => update({ color: v }) },
