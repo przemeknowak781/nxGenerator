@@ -11,6 +11,11 @@ so that the next configurator is a single command away.
 &nbsp;·&nbsp;
 Nx&nbsp;23&nbsp;·&nbsp;React&nbsp;19&nbsp;·&nbsp;Vite&nbsp;8&nbsp;·&nbsp;React&nbsp;Three&nbsp;Fiber&nbsp;·&nbsp;TypeScript&nbsp;strict
 
+**Live demo:** [stairgen](https://przemeknowak781.github.io/nxGenerator/stairgen/)
+· [taras](https://przemeknowak781.github.io/nxGenerator/taras/)
+· [planter](https://przemeknowak781.github.io/nxGenerator/planter/)
+— or the [landing page](https://przemeknowak781.github.io/nxGenerator/)
+
 </div>
 
 <br/>
