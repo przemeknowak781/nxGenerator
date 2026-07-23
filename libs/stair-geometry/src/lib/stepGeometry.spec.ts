@@ -28,22 +28,27 @@ describe('buildStepGeometry', () => {
     expect(g.boundingBox!.min.y).toBeCloseTo(3 * rise - cfg.stepThickness, 1);
   });
 
-  it('tread top/bottom carry flat, un-bled normals', () => {
-    // A solid tread has a flat top (+Y) and flat bottom (-Y). If the mesh shared
-    // vertices between those faces and the vertical walls, computeVertexNormals
-    // would average them and NO vertex would read a pure ±Y — the bug that bled
-    // a false gradient across the step. De-indexed, the flat faces are crisp.
-    const g = buildStepGeometry(DEFAULT_CONFIG, 0);
+  // A solid tread's flat top must face UP (+Y) and its flat bottom DOWN (-Y),
+  // for BOTH helix directions. Two bugs would break this: shared vertices bleed
+  // the flat faces (no pure ±Y at all), and a direction-blind winding leaves the
+  // whole tread inside-out for the CW helix (top faced down). This pins both.
+  it.each(['CW', 'CCW'] as const)('%s: tread top faces up, bottom faces down', (direction) => {
+    const cfg = { ...DEFAULT_CONFIG, direction };
+    const g = buildStepGeometry(cfg, 0);
+    const pos = g.getAttribute('position');
     const nrm = g.getAttribute('normal');
-    let up = 0;
-    let down = 0;
-    for (let i = 0; i < nrm.count; i++) {
+    const yTop = cfg.totalHeight / cfg.stepCount; // step 0 top
+    const yBot = yTop - cfg.stepThickness;
+    let topUp = 0;
+    let botDown = 0;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
       const ny = nrm.getY(i);
-      if (ny > 0.999) up++;
-      else if (ny < -0.999) down++;
+      if (Math.abs(y - yTop) < 1 && ny > 0.9) topUp++;
+      if (Math.abs(y - yBot) < 1 && ny < -0.9) botDown++;
     }
-    expect(up, 'flat top vertices (+Y)').toBeGreaterThan(20);
-    expect(down, 'flat bottom vertices (-Y)').toBeGreaterThan(20);
+    expect(topUp, `${direction} flat top faces +Y`).toBeGreaterThan(20);
+    expect(botDown, `${direction} flat bottom faces -Y`).toBeGreaterThan(20);
   });
 });
 
