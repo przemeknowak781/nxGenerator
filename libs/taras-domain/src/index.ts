@@ -17,6 +17,7 @@ export interface TarasConfig {
 
   railingEnabled: boolean;
   railingHeight: number;
+  balusterGap: number; // clear gap between the vertical balusters (tralki)
 
   color: string;
   roughness: number;
@@ -35,6 +36,7 @@ export const DEFAULT_CONFIG: TarasConfig = {
   beamHeight: 120,
   railingEnabled: true,
   railingHeight: 1000,
+  balusterGap: 120,
   color: '#a9784b',
   roughness: 0.72,
   metallic: 0,
@@ -109,6 +111,17 @@ const rules: Rule<TarasConfig>[] = [
           severity: 'warn',
           field: 'railingHeight',
           message: `Balustrada ${c.railingHeight} mm < 900 mm — zbyt niska dla bezpieczeństwa.`,
+        }
+      : null,
+  // Safety: the clear gap between balusters must not let a 120 mm sphere pass.
+  (c) =>
+    c.railingEnabled && c.balusterGap > 120
+      ? {
+          id: 'baluster_gap',
+          rule: 'baluster_gap_max',
+          severity: 'warn',
+          field: 'balusterGap',
+          message: `Prześwit tralek ${c.balusterGap} mm > 120 mm — dziecko może się przecisnąć.`,
         }
       : null,
   // Deflection: joist spacing must stay proportional to board thickness.

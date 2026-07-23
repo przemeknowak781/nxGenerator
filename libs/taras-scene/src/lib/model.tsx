@@ -15,17 +15,17 @@ const POST = 90;
 const RAILPOST = 70;
 const RAILH = 45; // top/bottom rail section
 const BAL = 32; // vertical baluster section
-const BAL_PITCH = 120; // target centre-to-centre spacing of balusters
 
 function spread(count: number, half: number): number[] {
   if (count < 2) return [0];
   return Array.from({ length: count }, (_, i) => -half + (i * 2 * half) / (count - 1));
 }
 
-// Evenly place interior balusters across a clear run, targeting BAL_PITCH.
-// Returns centre offsets (excluding the corner posts at the ends).
-function balusters(clearLen: number): number[] {
-  const gaps = Math.max(2, Math.round(clearLen / BAL_PITCH));
+// Evenly place interior balusters across a clear run so the gap between them is
+// close to `gap`. Returns centre offsets (excluding the corner posts at the ends).
+function balusters(clearLen: number, gap: number): number[] {
+  const pitch = BAL + Math.max(20, gap); // centre-to-centre = section + clear gap
+  const gaps = Math.max(2, Math.round(clearLen / pitch));
   const n = gaps - 1;
   return Array.from({ length: n }, (_, i) => -clearLen / 2 + ((i + 1) * clearLen) / gaps);
 }
@@ -39,7 +39,7 @@ function balusters(clearLen: number): number[] {
 export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) {
   const {
     deckLength, deckHeight, boardWidth, boardThickness, boardGap,
-    joistHeight, beamHeight, railingEnabled, railingHeight,
+    joistHeight, beamHeight, railingEnabled, railingHeight, balusterGap,
   } = config;
   const { boards, joists } = computeSummary(config);
 
@@ -107,8 +107,8 @@ export function TarasModel({ config, rootName = 'TarasRoot' }: TarasModelProps) 
   const rzEdge = deckLength / 2 - RAILH / 2;
   const rxEdge = spanW / 2 - RAILH / 2;
   // Baluster runs along each side, inset from the corner posts.
-  const balXs = balusters(spanW - RAILPOST); // along the width edges (z = ±rzEdge)
-  const balZs = balusters(deckLength - RAILPOST); // along the length edges (x = ±rxEdge)
+  const balXs = balusters(spanW - RAILPOST, balusterGap); // along the width edges (z = ±rzEdge)
+  const balZs = balusters(deckLength - RAILPOST, balusterGap); // along the length edges (x = ±rxEdge)
 
   return (
     <group name={rootName}>

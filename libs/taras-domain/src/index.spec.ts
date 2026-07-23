@@ -49,6 +49,11 @@ describe('Taras domain', () => {
     expect(validate({ ...DEFAULT_CONFIG, railingEnabled: false, railingHeight: 800 }).find((i) => i.rule === 'railing_height_min')).toBeUndefined();
   });
 
+  it('a wide baluster gap warns, and disabling the railing clears it', () => {
+    expect(validate({ ...DEFAULT_CONFIG, railingEnabled: true, balusterGap: 160 }).find((i) => i.rule === 'baluster_gap_max')?.severity).toBe('warn');
+    expect(validate({ ...DEFAULT_CONFIG, railingEnabled: false, balusterGap: 160 }).find((i) => i.rule === 'baluster_gap_max')).toBeUndefined();
+  });
+
   it('every preset produces a valid configuration', () => {
     for (const id of ['naziemny_sosna', 'wyniesiony_modrzew', 'egzotyczny_bangkirai']) {
       expect(validate(applyPreset(DEFAULT_CONFIG, id)), id).toHaveLength(0);
